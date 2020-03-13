@@ -1955,6 +1955,8 @@ class RTVController implements IEditorContribution {
 
 		let c = cp.spawn(SCALA, [SYNTH, example_fname]);
 
+		this.insertSynthesizedFragment('# Synthesizing. Please wait...', lineno);
+
 		c.stdout.on('data', (data) => {
 			console.log('[SYNTH OUT]' + data.toString());
 		});
