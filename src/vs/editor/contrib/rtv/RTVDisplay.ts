@@ -524,24 +524,7 @@ class RTVDisplayBox {
 							this._controller.synthesizeFragment(elmt.controllingLineNumber, beforeEnv, elmt.env, change);
 						}, 200);
 						this._editor.focus();
-					// }
-
-// 					else if (e.key === "Tab") {
-
-// ;
-// 						if (cellContent.innerText === elmt.env[elmt.vname!]){
-
-
-// 						}
-// 						else {
-// 							setTimeout(() => {
-
-// 								elmt.env[elmt.vname!] = cellContent.innerText;
-// 								let beforeEnv = this._controller.getEnvAtPrevTimeStep(elmt.env);
-// 								this._controller.updateFragment(beforeEnv, elmt.env, cellContent.innerText);
-// 							}, 200);
-// 						}
-// 						return true;
+						return false;
 					} else if (e.key === "Escape") {
 						this._editor.focus();
 						return false;
@@ -1936,7 +1919,7 @@ class RTVController implements IEditorContribution {
 		let cursorPos = this._editor.getPosition();
 		var startCol:number;
 		var endCol:number;
-		if (model.getLineContent(lineno).trim() === "" && cursorPos !== null && cursorPos.lineNumber == lineno) {
+		if (model.getLineContent(lineno).trim() === '' && cursorPos !== null && cursorPos.lineNumber == lineno) {
 			startCol = cursorPos.column;
 			endCol = cursorPos.column;
 		} else {
@@ -1963,8 +1946,6 @@ class RTVController implements IEditorContribution {
 
 		let example_fname = os.tmpdir() + path.sep + "synth_example.json";
 		if (change){
-			// let jsonAfterEnv = JSON.stringify(afterEnv);
-			// let jsonBeforeEnv = JSON.stringify(beforeEnv);
 			dictionary[beforeEnv['time'] as number] = [beforeEnv, afterEnv];
 
 		}
@@ -1974,23 +1955,28 @@ class RTVController implements IEditorContribution {
 
 		let c = cp.spawn(SCALA, [SYNTH, example_fname]);
 
-		c.stdout.on("data", (data) => {
-			console.log("stdout " + data.toString())
+		c.stdout.on('data', (data) => {
+			console.log('[SYNTH OUT]' + data.toString());
 		});
 
-		// TODO:
-		// c.on('close', closeCode) => {
 
-
-		// }
+		c.stderr.on('data', (data) => {
+			console.error('[SYNTH ERR]' + data.toString());
+		});
 		c.on('close', (exitCode) => {
 			console.log(`child process exited with code ${exitCode}`);
-			if (exitCode === 0) {
+			let error: boolean = exitCode !== 0;
+			if (!error) {
 				let fragment = fs.readFileSync(example_fname + ".out").toString();
 				console.log(fragment);
-				if (fragment !== "None") {
+				error = fragment === 'None';
+				if (!error) {
 					this.insertSynthesizedFragment(fragment, lineno);
 				}
+			}
+			else{
+
+				this.insertSynthesizedFragment('# Synthesis failed', lineno);
 			}
 		});
 	}
