@@ -1,7 +1,7 @@
 # RTV
 RTV is a projection model that projects the details of local, automatic variables, inputs, and outputs in a boxed modal.
 
-## How to develop RTV
+## How to develop for RTV
 There are few requirements before you could develop for RTV
 
 1. Node JS 12.14+
@@ -12,7 +12,7 @@ There are few requirements before you could develop for RTV
 Once you satisfy the requierments please follow the next steps to setup your environment
 
 1. type `yarn install` in the vscode directory
-2. Then open the vscode dircetory using your own VS Code local installation (you could download it online if you don't have one installed)
+2. Then open the vscode directory using your own VS Code local installation (you could download it online if you don't have one installed)
 3. In the `launch.json` under .vscode directory set the following env variables under `Launch VS Code`
 ```
 PYTHON3: path to your python3 binary
